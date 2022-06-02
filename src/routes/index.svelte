@@ -17,8 +17,12 @@
 		const res = await fetch('/send', options);
 		const text = await res.text();
 
-		if (res.ok) return (success = true);
-		throw new Error(text);
+		if (res.ok) {
+			success = true;
+			return 'success!';
+		} else {
+			throw new Error(text);
+		}
 	}
 	async function handleSubmit() {
 		promise = sendEmail();
