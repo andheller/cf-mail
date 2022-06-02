@@ -39,8 +39,8 @@ export async function get() {
 export async function post({ request }) {
 	const res = await request.json();
 	const message = `First name: ${res.fname} \nLast name: ${res.lname} \nEmail: ${res.email} \nMessage: ${res.message}`;
-
 	const send_request = await send(message);
+	if (send_request.ok) return { status: 200 };
 
-	return { body: send_request };
+	return { status: 500, body: send_request };
 }

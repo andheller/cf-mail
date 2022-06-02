@@ -1,5 +1,5 @@
 <script>
-	async function handleSubmit() {
+	async function sendEmail() {
 		const headers = new Headers();
 		headers.append('Content-Type', 'application/json');
 		const body = {
@@ -14,12 +14,21 @@
 			mode: 'cors',
 			body: JSON.stringify(body)
 		};
-		formSubmit = await fetch('/send', options);
-		console.log(formSubmit);
-		console.log(JSON.stringify(body));
+		const res = await fetch('/send', options);
+		const text = await res.text();
+
+		if (res.ok) return (success = true);
+		throw new Error(text);
 	}
-	let fname, lname, email, message, formSubmit;
+	async function handleSubmit() {
+		promise = sendEmail();
+	}
+	let fname, lname, email, message, promise, success;
 </script>
+
+<svelte:head>
+	<title>Cloudflare Mail</title>
+</svelte:head>
 
 <div class="bg-white py-16 px-4 overflow-hidden sm:px-6 lg:px-8 lg:py-24">
 	<div class="relative max-w-xl mx-auto">
@@ -28,8 +37,22 @@
 				Cloudflare Mail
 			</h2>
 			<p class="mt-4 text-lg leading-6 text-slate-500">
-				Nullam risus blandit ac aliquam justo ipsum. Quam mauris volutpat massa dictumst amet.
-				Sapien tortor lacus arcu.
+				Send email with <a
+					href="https://blog.cloudflare.com/sending-email-from-workers-with-mailchannels/"
+					class="underline"
+					target="_blank">workers</a
+				>
+				+
+				<a
+					href="https://mailchannels.zendesk.com/hc/en-us/articles/4565898358413-Sending-Email-from-Cloudflare-Workers-using-MailChannels-Send-API"
+					class="underline"
+					target="_blank">MailChannels</a
+				>.
+				<br /><br />
+				GitHub Repo:
+				<a href="https://github.com/andheller/cf-mail" class="underline" target="_blank">
+					https://github.com/andheller/cf-mail</a
+				>
 			</p>
 		</div>
 		<div class="mt-12">
@@ -94,16 +117,18 @@
 				</div>
 
 				<div class="sm:col-span-2">
-					{#if formSubmit}
-						{#await formSubmit}
+					{#if promise}
+						{#await promise}
 							<p>...Sending</p>
 						{:then}
 							<button
 								type="submit"
 								disabled
 								class="text-orange-800 bg-orange-50 block w-full py-3 text-center rounded font-semibold shadow focus:outline-none focus-visible:underline lg:text-base"
-								>Question Sent!</button
+								>Message Sent!</button
 							>
+						{:catch error}
+							<p>{error}</p>
 						{/await}
 					{:else}
 						<button
@@ -114,10 +139,10 @@
 					{/if}
 				</div>
 			</form>
-			{#if formSubmit}
+			{#if success}
 				<p class="mt-4 text-xl leading-6 text-slate-600 text-center">
-					Great, we got your question! <br />
-					With any luck we may have an answer for you!
+					Look! No servers! <br />
+					Your message was sent! Thank you!
 				</p>
 			{/if}
 		</div>
