@@ -1,7 +1,7 @@
 async function send(req) {
 	const email = import.meta.env.VITE_EMAIL;
 
-	send_request = new Request('https://api.mailchannels.net/tx/v1/send', {
+	const send_request = new Request('https://api.mailchannels.net/tx/v1/send', {
 		method: 'POST',
 		headers: {
 			'content-type': 'application/json'
